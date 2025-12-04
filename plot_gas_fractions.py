@@ -154,7 +154,7 @@ ax.semilogx(M500_ih, fgas_500, color=c_pop)
 ax.fill_between(M500_ih,fgas_500_minus,fgas_500_plus,alpha=0.2, color=c_pop, label="Popesso et al. 2024")
 
 ax.set_xlim(10**(12.5),1e15)
-ax.set_ylim(0.,0.18)
+ax.set_ylim(0.,0.25)
 ax.set_ylabel(r"$M_{\rm gas}/M_{\rm 500}$",size=size, rotation=90,labelpad=pad)
 ax.set_xlabel(r"$M_{\rm 500} \, [h^{-1}\rm M_{\odot}]$",size=size, rotation=0,labelpad=pad)
 
