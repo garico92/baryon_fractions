@@ -1,0 +1,166 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+#cosmology assumed for plotting purposes 
+
+hubble = 0.6766 # Planck18 hubble constant 
+f_uni =  0.04897/(0.04897+0.26067) #Planck18 universal baryon fraction, with respect to the cold matter (no massive neutrinos included) 
+
+## X-rays datasets ##
+###############################################################################################################
+data_dir = "data/"
+
+#WARNING: Cosmology dependence of the measurements to be taken into account
+
+# Popesso 2024 bestfit relations, eROSITA + CHEXMATE, https://arxiv.org/pdf/2411.16555
+h0_popesso = 0.6774
+M200_ih = np.logspace(12.5,15)
+M200 = M200_ih / h0_popesso * (h0_popesso/hubble)
+fgas_200 = (2.09) * 1e-6 * (M200)**(0.33) * h0_popesso**(3/2)/(hubble**(3./2))
+fgas_200_plus = (2.09+0.14) * 1e-6 * (M200)**(0.33 + 0.02) * h0_popesso**(3/2)/(hubble**(3./2))
+fgas_200_minus = (2.09-0.14) * 1e-6 * (M200)**(0.33 - 0.02) * h0_popesso**(3/2)/(hubble**(3./2))
+
+M500_ih = np.logspace(12.5,15)
+M500 = M500_ih/h0_popesso * (h0_popesso/hubble)
+fgas_500 = (2.23) * 1e-7 * (M500)**(0.39) * h0_popesso**(3/2)/(hubble**(3./2))
+fgas_500_plus = (2.23+0.18) * 1e-7 * (M500)**(0.39 + 0.02) * h0_popesso**(3/2)/(hubble**(3./2))
+fgas_500_minus = (2.23-0.18) * 1e-7 * (M500)**(0.39 - 0.02) * h0_popesso**(3/2)/(hubble**(3./2))
+
+##### Gonzalez (https://arxiv.org/pdf/1309.3565.pdf)
+data = np.loadtxt(data_dir+"Gonzalez_2013.dat",skiprows=1)
+h0_gonzalez = 0.6715 #Hubble factor assumed in the paper
+f_gas = data[:,1] * h0_gonzalez**(3/2)/(hubble**(3/2))
+erf_gas = data[:,2] * h0_gonzalez**(3/2)/(hubble**(3/2))
+f_star = data[:,3]
+erf_star = data[:,4]
+m500 = data[:,7]*1e14*h0_gonzalez 
+erm500 = data[:,8]*1e14*h0_gonzalez
+r500 = data[:,9]*h0_gonzalez
+err500 = data[:,10]*h0_gonzalez
+####### Vikhlinin (https://iopscience.iop.org/article/10.1086/500288/pdf)#WARNING: arXiv version (https://arxiv.org/pdf/astro-ph/0507092.pdf) is different!
+data = np.loadtxt(data_dir+"Vikhlinin_2006.dat",skiprows=2)
+h0_vik = 0.72 #Hubble factor assumed in the paper
+f_gas_V = data[:,14] * h0_vik**(3/2)/(hubble**(3/2))
+erf_gas_V = data[:,15] * h0_vik**(3/2)/(hubble**(3/2))
+m500_V = data[:,10]*1e14 * h0_vik 
+erm500_V = data[:,11]*1e14 * h0_vik
+r500_V = data[:,0] * h0_vik
+err500_V = data[:,1] * h0_vik
+####### Giodini 2009 (https://arxiv.org/pdf/0904.0448.pdf)
+data = np.loadtxt(data_dir+"Giodini_2009.dat",skiprows=2)
+h0_gio = 0.72 #Hubble factor assumed in the paper ‹WANING: CHECK THIS
+f_star_G = data[:,1]
+erf_star_G = data[:,2]
+m500_G = data[:,0] * h0_gio
+f_gas_G = data[:,3] * h0_gio**(3/2)/(hubble**(3/2))
+erf_gas_G = data[:,4] * h0_gio**(3/2)/(hubble**(3/2))
+f_stargas_G = data[:,5]
+erf_stargas_G = data[:,6]
+####### Arnaud 2017 (https://www.aanda.org/articles/aa/pdf/2007/42/aa8541-07.pdf)
+data = np.loadtxt(data_dir+"Arnaud_2007.dat",skiprows=2)
+h0_arnaud = 0.7
+m500_A = data[:,4] *h0_arnaud*1e14
+m500_Ap = data[:,5] *h0_arnaud*1e14
+m500_Am = -data[:,6] *h0_arnaud*1e14
+f_gas_A = data[:,13] * h0_arnaud**(3/2)/(hubble**(3/2))
+f_gas_Ap = data[:,14] * h0_arnaud**(3/2)/(hubble**(3/2))
+f_gas_Am = -data[:,15] * h0_arnaud**(3/2)/(hubble**(3/2))
+##########################################
+####### Sun 2008 (https://arxiv.org/pdf/0805.2320.pdf)
+data = np.loadtxt(data_dir+"Sun_2008.dat",skiprows=2)
+h0_sun = 0.73
+m500_S = data[:,1]*h0_sun*1e13
+m500_Sp = data[:,2]*h0_sun*1e13
+m500_Sm = -data[:,3]*h0_sun*1e13
+f_gas_S = data[:,4]* h0_sun**(3/2)/(hubble**(3/2))
+f_gas_Sp = data[:,5]* h0_sun**(3/2)/(hubble**(3/2))
+f_gas_Sm = -data[:,6]* h0_sun**(3/2)/(hubble**(3/2))
+##########################################
+########Ettori et al. 2011  https://arxiv.org/pdf/1009.3266
+h0_ettori = 0.7
+data = np.loadtxt(data_dir+"Ettori_2011_masses_method2.dat",skiprows=2) #M_200c
+m200_ettori = data[:,6] * h0_ettori*1e14 
+m200_ettori_p = data[:,7]*  h0_ettori*1e14
+m200_ettori_m = -data[:,8]* h0_ettori*1e14
+c200_ettori = data[:,3]
+
+data = np.loadtxt(data_dir+"Ettori_2011.dat",skiprows=2) #f_500, method 2 
+f_gas_ettori = data[:,-2] * h0_ettori**(3/2)/(hubble**(3/2)) 
+f_gas_err_ettori = data[:,-1]* h0_ettori**(3/2)/(hubble**(3/2))
+
+def virial_mass_converter(delta1, mass1, conc1, delta2, conc2):
+    """
+    functions to compute halo mass considering an overdensity delta1 
+    starting from a different overdensity delta2 and assuming a NFW halo profile
+    e.g. how to go from Delta_200 to Delta_500
+    see e.g. Ettori et al 2011
+    """
+    mass2 = delta2*conc2**3/(delta1*conc1**3)*mass1
+    return mass2
+
+
+def virial_concentration_converter(delta1, conc1, delta2):
+    """
+    functions to compute halo concentration
+    changing value of overdensity and assuming a NFW halo profile
+    e.g. how to go from Delta_200 to Delta_500
+    see e.g. Ettori et al 2011
+    """
+    from scipy import optimize
+
+    def function(conc2):
+        return (conc1/conc2)**3 * (np.log(1+conc2)-conc2/(1+conc2)) / (
+            np.log(1+conc1)-conc1/(1+conc1)) - delta2/delta1
+    conc2 = optimize.fsolve(function, conc1)
+    return conc2
+
+c500_ettori = virial_concentration_converter(200,c200_ettori,500)
+m500_ettori   = virial_mass_converter(200,m200_ettori,c200_ettori,500,c500_ettori)
+m500_ettori_p =  virial_mass_converter(200,m200_ettori+m200_ettori_p,c200_ettori,500,c500_ettori) - m500_ettori
+m500_ettori_m = m500_ettori-virial_mass_converter(200,m200_ettori-m200_ettori_m,c200_ettori,500,c500_ettori)
+
+
+########Wicker et al 2022,  https://arxiv.org/pdf/2204.12823.pdf
+h0_wicker = 0.7
+data = np.loadtxt(data_dir+"Wicker_2022.dat",skiprows=2)#
+m500_wicker = data[:,4] * h0_wicker*1e14
+m500_wicker_p = data[:,5]*  h0_wicker*1e14
+m500_wicker_m = data[:,6]* h0_wicker*1e14
+
+f_gas_wicker = data[:,7]* h0_wicker**(3/2)/(hubble**(3/2))
+f_gas_wicker_p = data[:,8]* h0_wicker**(3/2)/(hubble**(3/2))
+f_gas_wicker_m = data[:,9]* h0_wicker**(3/2)/(hubble**(3/2))
+##################################################################
+
+######################## plotting #############################
+
+
+fig,ax = plt.subplots(ncols=1,nrows=1,figsize=(8,5), constrained_layout=True)
+ax.axhline(f_uni,  c='k', label=r'$\Omega_{\rm b}/\Omega_{\rm m}$ Planck18', alpha=0.7)
+c_pop = 'orange'
+size=18
+pad = 8
+
+ax.errorbar(m500_V,f_gas_V,yerr=erf_gas_V,xerr=erm500_V,marker="o",c="red",ls="",label="Vikhlinin et al. 2006",alpha=0.9)
+ax.errorbar(m500_S,f_gas_S,yerr=(f_gas_Sm,f_gas_Sp),xerr=(m500_Sm,m500_Sp),marker="o",c="g",ls="",label="Sun et al. 2008",alpha=0.9)
+ax.errorbar(m500_G,f_gas_G,yerr=erf_gas_G, marker="o",c="blue",ls="",label="Giodini et al. 2009",alpha=0.9)
+ax.errorbar(m500_ettori,f_gas_ettori,yerr=f_gas_err_ettori,xerr=(m500_ettori_m,m500_ettori_p), marker="*",c="purple",ls="",label="Ettori et al. 2011",alpha=0.9)
+ax.errorbar(m500,f_gas,yerr=erf_gas,xerr=erm500,marker="o",c="indigo",ls="",label="Gonzalez et al. 2013",alpha=0.9)
+ax.errorbar(m500_A,f_gas_A,yerr=(f_gas_Am,f_gas_Ap),xerr=(m500_Am,m500_Ap),marker="o",c="m",ls="",label="Arnaud et al. 2017",alpha=0.9)
+ax.errorbar(m500_wicker,f_gas_wicker,yerr=(f_gas_wicker_m,f_gas_wicker_p),xerr=(m500_wicker_m,m500_wicker_p),marker="o",c="olive",ls="",label="Wicker et al. 2022",alpha=0.9)
+
+ax.semilogx(M500_ih, fgas_500, color=c_pop)
+ax.fill_between(M500_ih,fgas_500_minus,fgas_500_plus,alpha=0.2, color=c_pop, label="Popesso et al. 2024")
+
+ax.set_xlim(10**(12.5),1e15)
+ax.set_ylim(0.,0.18)
+ax.set_ylabel(r"$M_{\rm gas}/M_{\rm 500}$",size=size, rotation=90,labelpad=pad)
+ax.set_xlabel(r"$M_{\rm 500} \, [h^{-1}\rm M_{\odot}]$",size=size, rotation=0,labelpad=pad)
+
+ax.legend( prop={"size":12})#, fancybox=False, framealpha=0.,loc=‘center left’)
+
+ax.tick_params(axis='both', which='major', pad=pad, labelsize=size)
+
+plt.show()
+
