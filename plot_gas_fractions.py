@@ -27,6 +27,53 @@ fgas_500 = (2.23) * 1e-7 * (M500)**(0.39) * h0_popesso**(3/2)/(hubble**(3./2))
 fgas_500_plus = (2.23+0.18) * 1e-7 * (M500)**(0.39 + 0.02) * h0_popesso**(3/2)/(hubble**(3./2))
 fgas_500_minus = (2.23-0.18) * 1e-7 * (M500)**(0.39 - 0.02) * h0_popesso**(3/2)/(hubble**(3./2))
 
+##### Bulbul et al. 2024 
+data = np.loadtxt(data_dir+"Bulbul_2024.dat",skiprows=2)
+h0_bulbul = 0.6715 #Hubble factor assumed in the paper
+m500_B = data[:,0]*1e13*h0_bulbul 
+m500_Bm = data[:,1]*1e13*h0_bulbul 
+m500_Bp = data[:,2]*1e13*h0_bulbul 
+f_gas_B = data[:,3] * h0_bulbul**(3/2)/(hubble**(3/2))
+f_gas_Bm = data[:,4] * h0_bulbul**(3/2)/(hubble**(3/2))
+f_gas_Bp = data[:,5] * h0_bulbul**(3/2)/(hubble**(3/2))
+
+mask = f_gas_B >= 0
+
+m500_B = m500_B[mask]
+m500_Bm = m500_Bm[mask]
+m500_Bp = m500_Bp[mask]
+f_gas_B = f_gas_B[mask]
+f_gas_Bm = f_gas_Bm[mask]
+f_gas_Bp = f_gas_Bp[mask]
+
+###### Akino regression  (Akino et al. 2022 https://arxiv.org/pdf/2111.10080, Appendix E)
+
+hubble_Akino = 0.7
+def Akino_regression(m500, alpha, beta):
+    m = alpha + beta*np.log(m500/1e14) 
+    M = np.exp(m)*1e12
+    return M
+
+M500_Akino = np.logspace(13, 15, 20)
+
+M_gas_A = Akino_regression(M500_Akino, 2.02, 1.28)
+M_gas_m1 = Akino_regression(M500_Akino, 2.02-0.10, 1.28-0.09)
+M_gas_p1 = Akino_regression(M500_Akino, 2.02+0.08, 1.28+0.12)
+M_gas_m2 = Akino_regression(M500_Akino, 2.02-0.10, 1.28+0.09)
+M_gas_p2 = Akino_regression(M500_Akino, 2.02+0.08, 1.28-0.12)
+
+f_gas_Akino = M_gas_A/M500_Akino
+f_gas_Akino_m1 = M_gas_m1/M500_Akino
+f_gas_Akino_p1 = M_gas_p1/M500_Akino
+f_gas_Akino_m2 = M_gas_m2/M500_Akino
+f_gas_Akino_p2 = M_gas_p2/M500_Akino
+f_gas_Akino_m = np.min([f_gas_Akino_m1,f_gas_Akino_m2],axis=0)
+f_gas_Akino_p = np.max([f_gas_Akino_p1,f_gas_Akino_p2],axis=0)
+
+M500_Akino_ih = M500_Akino * hubble_Akino
+
+################################################################
+
 ##### Gonzalez (https://arxiv.org/pdf/1309.3565.pdf)
 data = np.loadtxt(data_dir+"Gonzalez_2013.dat",skiprows=1)
 h0_gonzalez = 0.6715 #Hubble factor assumed in the paper
@@ -150,8 +197,11 @@ ax.errorbar(m500,f_gas,yerr=erf_gas,xerr=erm500,marker="o",c="indigo",ls="",labe
 ax.errorbar(m500_A,f_gas_A,yerr=(f_gas_Am,f_gas_Ap),xerr=(m500_Am,m500_Ap),marker="o",c="m",ls="",label="Arnaud et al. 2017",alpha=0.9)
 ax.errorbar(m500_wicker,f_gas_wicker,yerr=(f_gas_wicker_m,f_gas_wicker_p),xerr=(m500_wicker_m,m500_wicker_p),marker="o",c="olive",ls="",label="Wicker et al. 2022",alpha=0.9)
 
+ax.plot(m500_B,f_gas_B,marker="o",c="orange",ls="",label="Bulbul et al. 2024",alpha=0.05)
 ax.semilogx(M500_ih, fgas_500, color=c_pop)
 ax.fill_between(M500_ih,fgas_500_minus,fgas_500_plus,alpha=0.2, color=c_pop, label="Popesso et al. 2024")
+ax.fill_between(M500_Akino_ih, f_gas_Akino_m, f_gas_Akino_p, color='brown', alpha=0.2, label="Akino et al. 2022")
+ax.plot(M500_Akino_ih, f_gas_Akino, color='brown', alpha=0.9)
 
 ax.set_xlim(10**(12.5),1e15)
 ax.set_ylim(0.,0.25)
