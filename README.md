@@ -45,6 +45,8 @@ Each dataset is provided in ASCII files in the repository. Typical columns inclu
 
 An example of how to load and plot the datasets is provided in **`plot_gas_fractions.py`**, **`plot_stellar_fractions.py`**, **`baryon_fractions.ipynb`**.
 
+> **Warning:** The plotting routines focus on mass fractions as a function of the halo mass, but they do not take into account the different redshift of the observations. Both halo masses and baryonic fractions are not directly observable, and in their derivations by the different groups and datasets there are probably different biases and assumptions on astrophysics and cosmology not taken into account here.  
+
 ---
 
 ## Citation
