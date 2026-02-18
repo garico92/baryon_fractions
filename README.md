@@ -3,9 +3,9 @@
 
 # Halo Gas and Stellar Fraction Datasets
 
-This repository contains a collection of halo gas fractions, and in some cases, stellar fractions, compiled from the literature. These datasets are primarily derived from X-ray or SZ observations, with total halo masses estimated under the assumption of thermal equilibrium.
+This repository contains a collection of halo gas fractions, and in some cases, stellar fractions, compiled from the literature. These datasets are primarily derived from X-ray or SZ observations, with total halo masses estimated under the assumption of thermal equilibrium or calibrated with weak lensing measurements.
 
-> **Disclaimer:** The tables and data are provided *as-is*, without any warranty. Users are responsible for verifying and interpreting the data appropriately. If you use any of these datasets in your research, please cite the original publication.
+> **Disclaimer:** The tables and data are provided *as-is*, without any warranty. The idea is to have a fast tool to compare different observations. Users are responsible for verifying and interpreting the data appropriately. If you use any of these datasets in your research, please cite the original publication.
 
 ---
 
@@ -35,20 +35,21 @@ This repository contains a collection of halo gas fractions, and in some cases, 
 
 ## Usage
 
-Each dataset is provided in a machine-readable format (e.g., CSV, FITS) in the repository. Typical columns include:
+This rep
+Each dataset is provided in ASCII files in the repository. Typical columns include:
 
 * Halo mass estimates
-* Gas fraction
-* Stellar fraction (if available)
+* Gas fractions
+* Stellar fractions
 * Associated uncertainties
 
-An example of how to load and plot the datasets is provided in **`plot_gas_fractions.py`**.
+An example of how to load and plot the datasets is provided in **`plot_gas_fractions.py`**, **`plot_stellar_fractions.py`**, **`baryon_fractions.ipynb`**.
 
 ---
 
 ## Citation
 
-Please cite the original papers corresponding to the dataset(s) you use. Proper attribution ensures credit for the original authors and helps reproducibility in scientific research.
+Please cite the original papers corresponding to the dataset(s) you use.
 
 ---
 
@@ -56,7 +57,7 @@ Please cite the original papers corresponding to the dataset(s) you use. Proper 
 
 * The datasets in this repository are provided **as-is**, for research and educational purposes only.
 * No warranty is given regarding accuracy, completeness, or suitability for any purpose.
-* Users are responsible for verifying and interpreting the data.
+* Users are responsible for verifying and interpreting the data reported.
 * When using any of these datasets, please cite the original publication(s).
 * Redistribution is allowed, provided this notice and citations are included.
 
