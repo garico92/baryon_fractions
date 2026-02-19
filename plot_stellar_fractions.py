@@ -24,6 +24,33 @@ f_gas_B = data[:,3] * h0_bulbul**(3/2)/(hubble**(3/2))
 f_gas_Bm = data[:,3] * h0_bulbul**(3/2)/(hubble**(3/2))
 f_gas_Bp = data[:,3] * h0_bulbul**(3/2)/(hubble**(3/2))
 
+### Grandis et al. 2024 (https://arxiv.org/pdf/2309.02920)
+
+data = np.genfromtxt(data_dir+"Grandis_2024.dat", comments="#",dtype=None, encoding=None)
+h_Grandis = 0.67
+# Columns: survey, component, Mpiv, fraction, frac_err, slope, slope_err
+survey = data['f0']
+component = data['f1']
+M500_Grandis= data['f2'] * h_Grandis
+fractions = data['f3']
+err_frac = data['f4']
+# Stellar
+stellar_mask = component == "stars"
+M_500c_sGrandis = M500_Grandis[stellar_mask]
+f_star_Grandis = fractions[stellar_mask]
+err_f_star_Grandis = err_frac[stellar_mask]
+
+#####Chiu et al. 2018 (https://academic.oup.com/mnras/article/478/3/3072/4996803)
+h0_chiu = 0.68
+data = np.genfromtxt(data_dir+"Chiu_2018.dat", dtype=None, names=True,encoding='utf-8', skip_header=17)#
+
+M500_Chiu  = data['M500'] * 1e14 * h0_chiu
+Mstar_Chiu  = data['Mstar'] * 1e12 * h0_chiu
+err_M500_Chiu = data['M500_err'] * 1e14 * h0_chiu
+err_Mstar_Chiu = data['Mstar_err'] * 1e12 * h0_chiu
+f_star_Chiu = Mstar_Chiu/M500_Chiu
+err_f_star_Chiu = np.sqrt((err_Mstar_Chiu/Mstar_Chiu)**2+(err_M500_Chiu/M500_Chiu)**2)*f_star_Chiu
+
 ##### Gonzalez (https://arxiv.org/pdf/1309.3565.pdf)
 data = np.loadtxt(data_dir+"Gonzalez_2013.dat",skiprows=1)
 h0_gonzalez = 0.6715 #Hubble factor assumed in the paper
@@ -214,9 +241,11 @@ pad = 8
 ax.errorbar(m500_G,f_star_G,yerr=erf_star_G, marker="o",c="blue",ls="",label="Giodini et al. 2009",alpha=0.9)
 ax.errorbar(M200_to_M500(M_200c_R),f200_to_f500(f_star_200_R),yerr=erf_star_200_R,xerr=erf_M200c_R,marker="o",c="red",ls="",label="Reyes et al. 2012",alpha=0.9)
 ax.errorbar(m500,f_star,yerr=erf_star, marker="o",c="indigo",ls="",label="Gonzalez et al. 2013",alpha=0.9)
+ax.errorbar(M500_Chiu,f_star_Chiu,yerr=err_f_star_Chiu,xerr=err_M500_Chiu, marker="o",c="violet",ls="",label="Chiu et al. 2018",alpha=0.9)
 ax.errorbar(M_500_K,frac_star_K,yerr=err_frac_star_K,marker="o",c="green",ls="",label="Kravtsov et al. 2018",alpha=0.9)
 ax.fill_between(M500_Akino_ih, f_star_Akino_m, f_star_Akino_p, color='brown', alpha=0.2, label="Akino et al. 2022")
 ax.plot(M500_Akino_ih, f_star_Akino, color='brown', alpha=0.9)
+ax.errorbar(M_500c_sGrandis, f_star_Grandis, yerr=err_f_star_Grandis, marker="o", c="navy", ls="",label="Grandis et al. 2024",alpha=0.9)
 
 ax.semilogx([],[])
 ax.set_xlim(1e11,2e15)
@@ -224,7 +253,7 @@ ax.set_ylim(1e-4,0.1)
 ax.set_ylabel(r"$M_{\rm stars}/M_{\rm tot} |_{\rm 500c}$",size=size, rotation=90,labelpad=pad)
 ax.set_xlabel(r"$M_{\rm 500c} \, [h^{-1}\rm M_{\odot}]$",size=size, rotation=0,labelpad=pad)
 
-ax.legend( prop={"size":12}, fancybox=False, framealpha=0.)
+ax.legend( prop={"size":12}, fancybox=True, framealpha=0.6)
 
 ax.tick_params(axis='both', which='major', pad=pad, labelsize=size)
 

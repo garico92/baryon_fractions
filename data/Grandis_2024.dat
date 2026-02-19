@@ -1,0 +1,19 @@
+# Grandis_2024.dat
+# Compilation of baryon fractions from Grandis et al. 2024 (tab. 1 of https://arxiv.org/pdf/2309.02920)
+# Columns:
+# 1) survey        : survey/experiment name
+# 2) component     : baryonic component (ICM = gas, stars = stellar)
+# 3) Mpiv_Msun     : pivot mass (M500c) in solar masses
+# 4) fraction      : baryon fraction at pivot mass
+# 5) frac_err      : 1-sigma uncertainty on fraction
+# 6) slope         : logarithmic slope with mass
+# 7) slope_err     : 1-sigma uncertainty on slope
+#
+# Missing values are set to NaN
+
+SPT        ICM    4.80e14   0.12    0.01    0.33    0.09
+SPT        stars  4.80e14   0.008   0.001   -0.20   0.12
+eFEDS      ICM    2.00e14   0.05    0.01    0.19    0.11
+HSCXXL    ICM    1.00e14   0.08    0.01    0.23    0.12
+HSCXXL    stars  1.00e14   0.021   0.003   -0.20   0.11
+WtG        ICM    1.00e15   0.12    0.00    NaN     NaN

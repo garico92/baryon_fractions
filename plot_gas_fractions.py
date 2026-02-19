@@ -72,15 +72,35 @@ f_gas_Akino_p = np.max([f_gas_Akino_p1,f_gas_Akino_p2],axis=0)
 
 M500_Akino_ih = M500_Akino * hubble_Akino
 
+############# Grandis et al. 2024 (https://arxiv.org/pdf/2309.02920)
+data = np.genfromtxt(data_dir+"Grandis_2024.dat", comments="#",dtype=None, encoding=None)
+h_Grandis = 0.67
+# Columns: survey, component, Mpiv, fraction, frac_err, slope, slope_err
+survey = data['f0']
+component = data['f1']
+M500_Grandis= data['f2'] * h_Grandis
+fractions = data['f3']
+err_frac = data['f4']
+# Gas (ICM)
+gas_mask = component == "ICM"
+M_500c_gGrandis = M500_Grandis[gas_mask]
+f_gas_Grandis = fractions[gas_mask]
+err_f_gas_Grandis = err_frac[gas_mask]
+###############Chiu et al. 2018 (https://academic.oup.com/mnras/article/478/3/3072/4996803)
+h0_chiu = 0.68
+data = np.genfromtxt(data_dir+"Chiu_2018.dat", dtype=None, names=True,encoding='utf-8', skip_header=17)#
+M500_Chiu  = data['M500'] * 1e14 * h0_chiu
+Mgas_Chiu  = data['MICM'] * 1e13 * h0_chiu
+err_M500_Chiu = data['M500_err'] * 1e14 * h0_chiu
+err_Mgas_Chiu = data['MICM_err'] * 1e13 * h0_chiu
+f_gas_Chiu = Mgas_Chiu/M500_Chiu
+err_f_gas_Chiu = np.sqrt((err_Mgas_Chiu/Mgas_Chiu)**2+(err_M500_Chiu/M500_Chiu)**2)*f_gas_Chiu
 ################################################################
-
 ##### Gonzalez (https://arxiv.org/pdf/1309.3565.pdf)
 data = np.loadtxt(data_dir+"Gonzalez_2013.dat",skiprows=1)
 h0_gonzalez = 0.6715 #Hubble factor assumed in the paper
 f_gas = data[:,1] * h0_gonzalez**(3/2)/(hubble**(3/2))
 erf_gas = data[:,2] * h0_gonzalez**(3/2)/(hubble**(3/2))
-f_star = data[:,3]
-erf_star = data[:,4]
 m500 = data[:,7]*1e14*h0_gonzalez 
 erm500 = data[:,8]*1e14*h0_gonzalez
 r500 = data[:,9]*h0_gonzalez
@@ -195,13 +215,17 @@ ax.errorbar(m500_G,f_gas_G,yerr=erf_gas_G, marker="o",c="blue",ls="",label="Giod
 ax.errorbar(m500_ettori,f_gas_ettori,yerr=f_gas_err_ettori,xerr=(m500_ettori_m,m500_ettori_p), marker="*",c="purple",ls="",label="Ettori et al. 2011",alpha=0.9)
 ax.errorbar(m500,f_gas,yerr=erf_gas,xerr=erm500,marker="o",c="indigo",ls="",label="Gonzalez et al. 2013",alpha=0.9)
 ax.errorbar(m500_A,f_gas_A,yerr=(f_gas_Am,f_gas_Ap),xerr=(m500_Am,m500_Ap),marker="o",c="m",ls="",label="Arnaud et al. 2017",alpha=0.9)
+ax.errorbar(M500_Chiu,f_gas_Chiu,yerr=err_f_gas_Chiu,xerr=err_M500_Chiu, marker="o",c="violet",ls="",label="Chiu et al. 2018",alpha=0.9)
 ax.errorbar(m500_wicker,f_gas_wicker,yerr=(f_gas_wicker_m,f_gas_wicker_p),xerr=(m500_wicker_m,m500_wicker_p),marker="o",c="olive",ls="",label="Wicker et al. 2022",alpha=0.9)
 
-ax.plot(m500_B,f_gas_B,marker="o",c="orange",ls="",label="Bulbul et al. 2024",alpha=0.05)
+ax.plot(m500_B,f_gas_B,marker="o",c="orange",ls="",alpha=0.05)
+ax.plot([],[], marker="o",c="orange",ls="",label="Bulbul et al. 2024",alpha=0.5)
 ax.semilogx(M500_ih, fgas_500, color=c_pop)
 ax.fill_between(M500_ih,fgas_500_minus,fgas_500_plus,alpha=0.2, color=c_pop, label="Popesso et al. 2024")
 ax.fill_between(M500_Akino_ih, f_gas_Akino_m, f_gas_Akino_p, color='brown', alpha=0.2, label="Akino et al. 2022")
 ax.plot(M500_Akino_ih, f_gas_Akino, color='brown', alpha=0.9)
+ax.errorbar(M_500c_gGrandis,f_gas_Grandis,yerr=err_f_gas_Grandis,marker="o",c="navy",ls="",label="Grandis et al. 2024",alpha=0.9)
+
 
 ax.set_xlim(10**(12.5),1e15)
 ax.set_ylim(0.,0.25)
