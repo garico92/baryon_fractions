@@ -109,15 +109,20 @@ def Akino_regression(m500, alpha, beta):
 
 M500_Akino = np.logspace(13, 15, 20)
 
-M_bcg_A = Akino_regression(M500_Akino, -1.07, 0.39)
-M_bcg_m = Akino_regression(M500_Akino, -1.07-0.08, 0.39-0.08)
-M_bcg_p = Akino_regression(M500_Akino, -1.07+0.18, 0.39+0.13)
-
 M_bcg_A = Akino_regression(M500_Akino,  -1.07,      0.39)
 M_bcg_m1 = Akino_regression(M500_Akino, -1.07-0.08, 0.39+0.13)
 M_bcg_p1 = Akino_regression(M500_Akino, -1.07+0.18, 0.39-0.08)
 M_bcg_m2 = Akino_regression(M500_Akino, -1.07-0.08, 0.39-0.08)
 M_bcg_p2 = Akino_regression(M500_Akino, -1.07+0.18, 0.39+0.13)
+
+f_bcg_Akino = M_bcg_A/M500_Akino
+f_bcg_Akino_m1 = M_bcg_m1/M500_Akino
+f_bcg_Akino_p1 = M_bcg_p1/M500_Akino
+f_bcg_Akino_m2 = M_bcg_m2/M500_Akino
+f_bcg_Akino_p2 = M_bcg_p2/M500_Akino
+
+f_bcg_Akino_m = np.min([f_bcg_Akino_m1,f_bcg_Akino_m2],axis=0)
+f_bcg_Akino_p = np.max([f_bcg_Akino_p1,f_bcg_Akino_p2],axis=0)
 
 M_star_A = Akino_regression(M500_Akino, 0.68, 0.76)
 M_star_m1 = Akino_regression(M500_Akino, 0.68-0.07, 0.76+0.12)
