@@ -113,11 +113,17 @@ M_bcg_A = Akino_regression(M500_Akino, -1.07, 0.39)
 M_bcg_m = Akino_regression(M500_Akino, -1.07-0.08, 0.39-0.08)
 M_bcg_p = Akino_regression(M500_Akino, -1.07+0.18, 0.39+0.13)
 
+M_bcg_A = Akino_regression(M500_Akino,  -1.07,      0.39)
+M_bcg_m1 = Akino_regression(M500_Akino, -1.07-0.08, 0.39+0.13)
+M_bcg_p1 = Akino_regression(M500_Akino, -1.07+0.18, 0.39-0.08)
+M_bcg_m2 = Akino_regression(M500_Akino, -1.07-0.08, 0.39-0.08)
+M_bcg_p2 = Akino_regression(M500_Akino, -1.07+0.18, 0.39+0.13)
+
 M_star_A = Akino_regression(M500_Akino, 0.68, 0.76)
 M_star_m1 = Akino_regression(M500_Akino, 0.68-0.07, 0.76+0.12)
-M_star_p1 = Akino_regression(M500_Akino, 0.68+0.15, 0.76-0.15)
-M_star_m2 = Akino_regression(M500_Akino, 0.68-0.07, 0.76-0.12)
-M_star_p2 = Akino_regression(M500_Akino, 0.68+0.15, 0.76+0.15)
+M_star_p1 = Akino_regression(M500_Akino, 0.68+0.15, 0.76-0.08)
+M_star_m2 = Akino_regression(M500_Akino, 0.68-0.07, 0.76-0.08)
+M_star_p2 = Akino_regression(M500_Akino, 0.68+0.15, 0.76+0.12)
 
 f_star_Akino = M_star_A/M500_Akino
 f_star_Akino_m1 = M_star_m1/M500_Akino
