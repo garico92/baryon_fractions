@@ -217,7 +217,7 @@ def M200_to_M500(x):
 # Stellar fraction conversion
 # -------------------------------------------------------------
 
-def convert_fstar(M500, f500):
+def convert_to_fstar200(M500, f500):
     """
     M500 = total halo mass, M500c in Msun/h
     Roughly convert stellar fraction from r500c to r200c assuming:
@@ -243,9 +243,31 @@ def convert_fstar(M500, f500):
 
     return f_star_200
 
+def convert_to_fstar500(M200, f200):
+    """
+    M200 = total halo mass, M200c in Msun/h
+    Roughly convert stellar fraction from r500c to r200c assuming:
+    - BCG fully enclosed within r500c, M_bcg(<r500c) = M_bcg(<r200c)
+    - Satellites follow NFW, fraction f_sat(<r500c) = f_sat(<r200c)
+    -  scaling of the fraction M_BCG/M_star (Akino et al. 2022 https://arxiv.org/pdf/2111.10080)
+    """
+    M200=np.atleast_1d(M200)
+    f200=np.atleast_1d(f200)
+    M500 = M200_to_M500(M200)
+
+    f_bcg_500 = 0.196*hubble**0.34*(M500/1e14)**-0.34 #rough fraction M_BCG/M_star (Akino et al. 2022 https://arxiv.org/pdf/2111.10080) 
+    f_bcg_500[f_bcg_500>=1] = 0.99 #extrapolation to small halo scales
+    f_sat_500 = (1 - f_bcg_500)  
+    xstar = f_bcg_500 / f_sat_500 #M_bcg/M_sat_500 
+    f500 = f200 * M200 * (1+xstar)/(xstar*M500+M200)  #assuming scaling of satellite masses are NFW similarly to total mass  
+    M_bcg = f_bcg_500 * f500 * M500
+    M_sat_500 = f_sat_500 * f500 * M500   
+    return (M_bcg + M_sat_500) / M500
+    
+
 pivot_mass = 1e14 # M500c [Msun/h] 
 f500_tab = np.linspace(1e-4, 0.5, 1000)
-f200_tab = convert_fstar(pivot_mass, f500_tab)
+f200_tab = convert_to_fstar200(pivot_mass, f500_tab)
 
 def f500_to_f200(f500):
     return np.exp(np.interp(np.log(f500), np.log(f500_tab), np.log(f200_tab)))
@@ -263,7 +285,7 @@ pad = 8
 
 ax.errorbar(m500_G,f_star_G,yerr=erf_star_G, marker="o",c="blue",ls="",label="Giodini et al. 2009",alpha=0.9)
 ax.errorbar(M500_Z, f_star_Z, xerr=M500_err_Z, yerr=f_star_err_Z, marker="o",c="cyan",ls="",label="Zhang et al. 2011",alpha=0.9)
-ax.errorbar(M200_to_M500(M_200c_R),f200_to_f500(f_star_200_R),yerr=erf_star_200_R,xerr=erf_M200c_R,marker="o",c="red",ls="",label="Reyes et al. 2012",alpha=0.9)
+ax.errorbar(M200_to_M500(M_200c_R),convert_to_fstar500(M_200c_R,f_star_200_R),yerr=erf_star_200_R,xerr=erf_M200c_R,marker="o",c="red",ls="",label="Reyes et al. 2012",alpha=0.9)
 ax.errorbar(m500,f_star,yerr=erf_star, marker="o",c="indigo",ls="",label="Gonzalez et al. 2013",alpha=0.9)
 ax.errorbar(M500_Chiu,f_star_Chiu,yerr=err_f_star_Chiu,xerr=err_M500_Chiu, marker="o",c="violet",ls="",label="Chiu et al. 2018",alpha=0.9)
 ax.errorbar(M_500_K,frac_star_K,yerr=err_frac_star_K,marker="o",c="green",ls="",label="Kravtsov et al. 2018",alpha=0.9)
