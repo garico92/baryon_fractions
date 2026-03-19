@@ -255,7 +255,7 @@ def f200_to_f500(f200):
 
 ################################################################
 
-fig,ax = plt.subplots(ncols=1,nrows=1,figsize=(8,5), constrained_layout=True)
+fig,ax = plt.subplots(ncols=1,nrows=1,figsize=(10,8), constrained_layout=True)
 #ax.axhline(f_uni,  c='k', label=r'$\Omega_{\rm b}/\Omega_{\rm m}$ Planck18', alpha=0.7)
 c_pop = 'orange'
 size=18
@@ -277,7 +277,7 @@ ax.set_ylim(1e-4,0.1)
 ax.set_ylabel(r"$M_{\rm stars}/M_{\rm tot} |_{\rm 500c}$",size=size, rotation=90,labelpad=pad)
 ax.set_xlabel(r"$M_{\rm 500c} \, [h^{-1}\rm M_{\odot}]$",size=size, rotation=0,labelpad=pad)
 
-ax.legend( prop={"size":12}, fancybox=True, framealpha=0.6)
+ax.legend( prop={"size":14}, fancybox=True, framealpha=0.6)
 
 ax.tick_params(axis='both', which='major', pad=pad, labelsize=size)
 

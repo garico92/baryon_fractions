@@ -134,6 +134,20 @@ f_gas_A = data[:,13] * h0_arnaud**(3/2)/(hubble**(3/2))
 f_gas_Ap = data[:,14] * h0_arnaud**(3/2)/(hubble**(3/2))
 f_gas_Am = -data[:,15] * h0_arnaud**(3/2)/(hubble**(3/2))
 ##########################################
+#Mulroy et al. 2019 (https://arxiv.org/pdf/1901.11276)
+h0_M = 0.7
+Om_M = 0.3
+data = np.genfromtxt(data_dir+"Mulroy_2019.dat", dtype=None, names=True, encoding='utf-8', skip_header=26)#
+M_M         = data["M_post"]     * 1e14  * h0_M  # [M_sun/h]
+M_M_ep      = data["M_post_err_plus"]  * 1e14 * h0_M
+M_M_em      = data["M_post_err_minus"]  * 1e14 * h0_M
+Mgas_M      = data["Mgas"]     * 1e14 * h0_M  # [M_sun/h]
+Mgas_ep_M   = data["Mgas_err_plus"]  * 1e14 * h0_M
+Mgas_em_M   = data["Mgas_err_minus"]  * 1e14 * h0_M
+f_gas_M     = Mgas_M / M_M
+f_gas_M_ep  = f_gas_M * np.sqrt((Mgas_ep_M / Mgas_M)**2 + (M_M_em / M_M)**2)   # upper
+f_gas_M_em  = f_gas_M * np.sqrt((Mgas_em_M / Mgas_M)**2 + (M_M_ep / M_M)**2)   # lower
+
 ####### Sun 2008 (https://arxiv.org/pdf/0805.2320.pdf)
 data = np.loadtxt(data_dir+"Sun_2008.dat",skiprows=2)
 h0_sun = 0.73
@@ -214,7 +228,7 @@ f_gas_wicker_m = data[:,9]* h0_wicker**(3/2)/(hubble**(3/2))
 ######################## plotting #############################
 
 
-fig,ax = plt.subplots(ncols=1,nrows=1,figsize=(8,5), constrained_layout=True)
+fig,ax = plt.subplots(ncols=1,nrows=1,figsize=(10,8), constrained_layout=True)
 ax.axhline(f_uni,  c='k', label=r'$\Omega_{\rm b}/\Omega_{\rm m}$ Planck18', alpha=0.7)
 c_pop = 'orange'
 size=18
@@ -228,6 +242,7 @@ ax.errorbar(M500_Z, f_gas_Z, xerr=M500_err_Z, yerr=f_gas_err_Z, marker="o",c="cy
 ax.errorbar(m500,f_gas,yerr=erf_gas,xerr=erm500,marker="o",c="indigo",ls="",label="Gonzalez et al. 2013",alpha=0.9)
 ax.errorbar(m500_A,f_gas_A,yerr=(f_gas_Am,f_gas_Ap),xerr=(m500_Am,m500_Ap),marker="o",c="m",ls="",label="Arnaud et al. 2017",alpha=0.9)
 ax.errorbar(M500_Chiu,f_gas_Chiu,yerr=err_f_gas_Chiu,xerr=err_M500_Chiu, marker="o",c="violet",ls="",label="Chiu et al. 2018",alpha=0.9)
+ax.errorbar(M_M,f_gas_M,yerr=(f_gas_M_em,f_gas_M_ep),xerr=(M_M_em,M_M_ep), marker="o",c="maroon",ls="",label="Mulroy et al. 2019",alpha=0.9)
 ax.errorbar(m500_wicker,f_gas_wicker,yerr=(f_gas_wicker_m,f_gas_wicker_p),xerr=(m500_wicker_m,m500_wicker_p),marker="o",c="olive",ls="",label="Wicker et al. 2022",alpha=0.9)
 
 ax.plot(m500_B,f_gas_B,marker="o",c="orange",ls="",alpha=0.05)
@@ -239,12 +254,12 @@ ax.plot(M500_Akino_ih, f_gas_Akino, color='brown', alpha=0.9)
 ax.errorbar(M_500c_gGrandis,f_gas_Grandis,yerr=err_f_gas_Grandis,marker="o",c="navy",ls="",label="Grandis et al. 2024",alpha=0.9)
 
 
-ax.set_xlim(10**(12.5),1e15)
+ax.set_xlim(10**(12.5),2e15)
 ax.set_ylim(0.,0.25)
 ax.set_ylabel(r"$M_{\rm gas}/M_{\rm 500}$",size=size, rotation=90,labelpad=pad)
 ax.set_xlabel(r"$M_{\rm 500} \, [h^{-1}\rm M_{\odot}]$",size=size, rotation=0,labelpad=pad)
 
-ax.legend( prop={"size":12})#, fancybox=False, framealpha=0.,loc=‘center left’)
+ax.legend( prop={"size":14})#, fancybox=False, framealpha=0.,loc=‘center left’)
 
 ax.tick_params(axis='both', which='major', pad=pad, labelsize=size)
 
