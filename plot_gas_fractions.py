@@ -156,6 +156,17 @@ data = np.loadtxt(data_dir+"Ettori_2011.dat",skiprows=2) #f_500, method 2
 f_gas_ettori = data[:,-2] * h0_ettori**(3/2)/(hubble**(3/2)) 
 f_gas_err_ettori = data[:,-1]* h0_ettori**(3/2)/(hubble**(3/2))
 
+
+########Zhang et al. 2011 (https://arxiv.org/pdf/1109.0390)
+data = np.genfromtxt(data_dir+"Zhang_2011.dat", dtype=None, names=True, encoding='utf-8',skip_header=1)
+h0_Z = 0.7 #Hubble factor assumed in the paper
+Om_Z= 0.3 #Omega matter assumed in the paper
+
+M500_Z = data['M500'] * h0_Z*1e14
+M500_err_Z = data['M500_err'] * h0_Z*1e14
+f_gas_Z = data['fgas'] * h0_Z**(3/2)/(hubble**(3/2))
+f_gas_err_Z = data['fgas_err'] * h0_Z**(3/2)/(hubble**(3/2))
+
 def virial_mass_converter(delta1, mass1, conc1, delta2, conc2):
     """
     functions to compute halo mass considering an overdensity delta1 
@@ -213,6 +224,7 @@ ax.errorbar(m500_V,f_gas_V,yerr=erf_gas_V,xerr=erm500_V,marker="o",c="red",ls=""
 ax.errorbar(m500_S,f_gas_S,yerr=(f_gas_Sm,f_gas_Sp),xerr=(m500_Sm,m500_Sp),marker="o",c="g",ls="",label="Sun et al. 2008",alpha=0.9)
 ax.errorbar(m500_G,f_gas_G,yerr=erf_gas_G, marker="o",c="blue",ls="",label="Giodini et al. 2009",alpha=0.9)
 ax.errorbar(m500_ettori,f_gas_ettori,yerr=f_gas_err_ettori,xerr=(m500_ettori_m,m500_ettori_p), marker="*",c="purple",ls="",label="Ettori et al. 2011",alpha=0.9)
+ax.errorbar(M500_Z, f_gas_Z, xerr=M500_err_Z, yerr=f_gas_err_Z, marker="o",c="cyan",ls="",label="Zhang et al. 2011",alpha=0.9)
 ax.errorbar(m500,f_gas,yerr=erf_gas,xerr=erm500,marker="o",c="indigo",ls="",label="Gonzalez et al. 2013",alpha=0.9)
 ax.errorbar(m500_A,f_gas_A,yerr=(f_gas_Am,f_gas_Ap),xerr=(m500_Am,m500_Ap),marker="o",c="m",ls="",label="Arnaud et al. 2017",alpha=0.9)
 ax.errorbar(M500_Chiu,f_gas_Chiu,yerr=err_f_gas_Chiu,xerr=err_M500_Chiu, marker="o",c="violet",ls="",label="Chiu et al. 2018",alpha=0.9)

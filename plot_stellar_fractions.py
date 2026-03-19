@@ -72,6 +72,18 @@ erf_gas_G = data[:,4] * h0_gio**(3/2)/(hubble**(3/2))
 f_stargas_G = data[:,5]
 erf_stargas_G = data[:,6]
 
+
+########Zhang et al. 2011 (https://arxiv.org/pdf/1109.0390)
+data = np.genfromtxt(data_dir+"Zhang_2011.dat", dtype=None, names=True, encoding='utf-8',skip_header=1)
+h0_Z = 0.7 #Hubble factor assumed in the paper
+Om_Z= 0.3 #Omega matter assumed in the paper
+
+M500_Z = data['M500'] * h0_Z*1e14
+M500_err_Z = data['M500_err'] * h0_Z*1e14
+f_star_Z = data['fstar'] * h0_Z**(3/2)/(hubble**(3/2))
+f_star_err_Z = data['fstar_err'] * h0_Z**(3/2)/(hubble**(3/2))
+
+
 ####### Kravtsov 2018 (https://arxiv.org/pdf/1401.7329)
 data = np.loadtxt(data_dir+"Kravtsov_2018.dat",skiprows=2)
 
@@ -250,6 +262,7 @@ size=18
 pad = 8
 
 ax.errorbar(m500_G,f_star_G,yerr=erf_star_G, marker="o",c="blue",ls="",label="Giodini et al. 2009",alpha=0.9)
+ax.errorbar(M500_Z, f_star_Z, xerr=M500_err_Z, yerr=f_star_err_Z, marker="o",c="cyan",ls="",label="Zhang et al. 2011",alpha=0.9)
 ax.errorbar(M200_to_M500(M_200c_R),f200_to_f500(f_star_200_R),yerr=erf_star_200_R,xerr=erf_M200c_R,marker="o",c="red",ls="",label="Reyes et al. 2012",alpha=0.9)
 ax.errorbar(m500,f_star,yerr=erf_star, marker="o",c="indigo",ls="",label="Gonzalez et al. 2013",alpha=0.9)
 ax.errorbar(M500_Chiu,f_star_Chiu,yerr=err_f_star_Chiu,xerr=err_M500_Chiu, marker="o",c="violet",ls="",label="Chiu et al. 2018",alpha=0.9)
